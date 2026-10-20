@@ -1,41 +1,25 @@
 name: Build DS Voice Recorder
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04  # ⬅️ Utilise Ubuntu 20.04 (plus stable)
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install base dependencies
+      - name: Setup devkitPro
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            wget \
-            git \
-            make \
-            g++ \
-            libpng-dev \
-            zlib1g-dev
-
-      - name: Install devkitPro (méthode alternative)
-        run: |
-          # Ajoute le dépôt officiel
-          echo 'deb https://apt.devkitpro.org/ stable main' | sudo tee /etc/apt/sources.list.d/devkitpro.list
-          wget -qO - https://apt.devkitpro.org/devkitpro-key.gpg | sudo apt-key add -
           sudo apt-get update
           sudo apt-get install -y devkitpro-pacman
           sudo dkp-pacman -S --noconfirm nds-dev
 
-      - name: Build project
+      - name: Build
         run: |
           cd ds-voice-recorder
           make
 
-      - name: Upload .nds file
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: ds-voice-recorder
           path: ds-voice-recorder/*.nds
-          retention-days: 30
