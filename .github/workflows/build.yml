@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4  # Mise à jour vers v4
 
       - name: Install devkitPro
         run: |
@@ -22,7 +22,8 @@ jobs:
           make
 
       - name: Upload .nds file
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4  # ⬅️ CORRIGÉ : v4 au lieu de v2
         with:
           name: ds-voice-recorder
           path: ds-voice-recorder/*.nds
+          retention-days: 30  # Optionnel : garde lartifact 30 jours
