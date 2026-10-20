@@ -1,0 +1,28 @@
+name: Build DS Voice Recorder
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install devkitPro
+        run: |
+          sudo apt update
+          sudo apt install -y wget tar
+          wget https://github.com/devkitPro/installer/releases/latest/download/devkitpro-pacman.deb
+          sudo dpkg -i devkitpro-pacman.deb
+          sudo dkp-pacman -S nds-dev
+
+      - name: Build
+        run: |
+          cd ds-voice-recorder
+          make
+
+      - name: Upload .nds file
+        uses: actions/upload-artifact@v2
+        with:
+          name: ds-voice-recorder
+          path: ds-voice-recorder/*.nds
