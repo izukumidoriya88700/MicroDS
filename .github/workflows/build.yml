@@ -1,6 +1,6 @@
 name: Build DS Voice Recorder
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -8,31 +8,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install devkitPro
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            wget \
-            curl \
-            ca-certificates \
-            git \
-            make \
-            g++
-
-      - name: Install devkitPro (latest version)
-        run: |
-          # Méthode officielle recommandée par devkitPro
-          wget -O - https://apt.devkitpro.org/install-devkitpro-deb.sh | sudo bash
+          sudo apt-get install -y wget
+          wget -qO- https://apt.devkitpro.org/install-devkitpro-deb.sh | sudo bash
           sudo dkp-pacman -S --noconfirm nds-dev
 
-      - name: Build project
+      - name: Build
         run: |
           cd ds-voice-recorder
           make
 
-      - name: Upload .nds file
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: ds-voice-recorder
           path: ds-voice-recorder/*.nds
-          retention-days: 30
