@@ -1,29 +1,38 @@
 name: Build DS Voice Recorder
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # Mise à jour vers v4
+      - uses: actions/checkout@v4
 
-      - name: Install devkitPro
+      - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y wget tar
-          wget https://github.com/devkitPro/installer/releases/latest/download/devkitpro-pacman.deb
-          sudo dpkg -i devkitpro-pacman.deb
-          sudo dkp-pacman -S nds-dev
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            wget \
+            curl \
+            ca-certificates \
+            git \
+            make \
+            g++
 
-      - name: Build
+      - name: Install devkitPro (latest version)
+        run: |
+          # Méthode officielle recommandée par devkitPro
+          wget -O - https://apt.devkitpro.org/install-devkitpro-deb.sh | sudo bash
+          sudo dkp-pacman -S --noconfirm nds-dev
+
+      - name: Build project
         run: |
           cd ds-voice-recorder
           make
 
       - name: Upload .nds file
-        uses: actions/upload-artifact@v4  # ⬅️ CORRIGÉ : v4 au lieu de v2
+        uses: actions/upload-artifact@v4
         with:
           name: ds-voice-recorder
           path: ds-voice-recorder/*.nds
-          retention-days: 30  # Optionnel : garde lartifact 30 jours
+          retention-days: 30
